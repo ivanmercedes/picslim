@@ -20,9 +20,9 @@ picslim [options]
 
 Options:
 
-**-q, --quality [value]:** Set the image quality (1 to 100, default: 80).
-**-mw, --maxWidth [value]:** Set the maximum width allowed (default: null).
-**-mh, --maxHeight [value]:** Set the maximum height allowed (default: null).
+**-q, --quality [value]:** Set the image quality (1 to 100, default: 80).<br>
+**-mw, --maxWidth [value]:** Set the maximum width allowed (default: null).<br>
+**-mh, --maxHeight [value]:** Set the maximum height allowed (default: null).<br>
 **-c, --compressionLevel [value]:** Set the compression level (0 to 9, default: 9).
 
 Example:
