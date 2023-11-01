@@ -21,7 +21,9 @@ picslim [options]
 Options:
 
 **-q, --quality [value]:** Set the image quality (1 to 100, default: 80).
-**-w, --width [value]:** Set the maximum width allowed (default: 1366).
+**-mw, --maxWidth [value]:** Set the maximum width allowed (default: null).
+**-mh, --maxHeight [value]:** Set the maximum height allowed (default: null).
+**-c, --compressionLevel [value]:** Set the compression level (0 to 9, default: 9).
 
 Example:
 
@@ -32,6 +34,7 @@ picslim -q 90 -w 1920
 This will optimize all JPEG and PNG images in the current directory, and the optimized images will be saved in a 'min' directory.
 
 ### Example
+
 Suppose you have a directory with the following images:
 
 - image1.jpg
@@ -55,11 +58,10 @@ After running the command, you will have the following directory structure:
   - image4.png
 ```
 
-###  License
-This project is licensed under the MIT License. See the LICENSE file for details.
+### License
 
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ### Author
 
 Ivan Mercedes
-
