@@ -1,14 +1,14 @@
 {
-  "name": "optiloom",
+  "name": "picllim",
   "version": "0.0.1",
-  "description": "Transforms your images into lighter, dazzling masterpieces without compromise.",
-  "main": "optiloom.js",
+  "description": "Picslim is a Node.js package that allows you to optimize images in a specified directory.",
+  "main": "picllim.js",
   "bin": {
-    "optiloom": "optiloom.js"
+    "picllim": "picllim.js"
   },
-  "source": "optiloom.js",
+  "source": "picllim.js",
   "scripts": {
-    "start": "node optiloom.js  -q 80"
+    "start": "node picllim.js  -q 80"
   },
   "keywords": [
     "optimization",
@@ -20,6 +20,7 @@
   "author": "Ivan Mercedes <ivanmercede@gmail.com> (https://ivanmercedes.com/)",
   "license": "MIT",
   "files": [
+    "picllim.js",
     "package.json",
     "README.md"
   ],
