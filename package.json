@@ -1,14 +1,14 @@
 {
-  "name": "picllim",
-  "version": "0.0.3",
+  "name": "picslim",
+  "version": "0.0.4",
   "description": "Picslim is a Node.js package that allows you to optimize images in a specified directory.",
-  "main": "picllim.js",
+  "main": "picslim.js",
   "bin": {
-    "picllim": "picllim.js"
+    "picslim": "picslim.js"
   },
-  "source": "picllim.js",
+  "source": "picslim.js",
   "scripts": {
-    "start": "node picllim.js  -q 80"
+    "start": "node picslim.js  -q 80"
   },
   "keywords": [
     "optimization",
