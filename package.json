@@ -8,7 +8,9 @@
   },
   "source": "picslim.js",
   "scripts": {
-    "start": "node picslim.js  -q 80"
+    "start": "node picslim.js  -q 80",
+    "format": "standard --fix",
+    "prepare": "husky install"
   },
   "keywords": [
     "optimization",
@@ -29,8 +31,26 @@
     "package.json",
     "README.md"
   ],
+  "eslintConfig": {
+    "extends": "./node_modules/standard/eslintrc.json"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js}": [
+      "standard --fix"
+    ]
+  },
   "dependencies": {
     "sharp": "^0.32.6",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.2",
+    "standard": "^17.1.0"
   }
 }
