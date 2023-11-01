@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require("fs");
 const sharp = require("sharp");
 const yargs = require("yargs");
