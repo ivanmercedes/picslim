@@ -1,0 +1,13 @@
+{
+    "rules": {
+      "comma-dangle": "off",
+      "@typescript-eslint/comma-dangle": "off"
+    },
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+
+    "env": {
+        "es6": true
+    }
+}
