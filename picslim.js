@@ -99,12 +99,11 @@ async function loadConfig(configFile)
 			process.exit(1);
 		}
 
-		// Add validation checks here
+
 		if ( !config.inputDir || !config.outputDir ) {
 			console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.");
 			process.exit(1);
 		}
-		// Add more validation checks as needed
 
 		return config;
 	} catch ( error ) {
@@ -144,8 +143,6 @@ function validateConfig(config)
 		process.exit(1);
 	}
 }
-
-// The rest of your code remains unchanged.
 
 /**
  * The main function that processes all image files in the input directory.
