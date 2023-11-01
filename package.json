@@ -1,0 +1,30 @@
+{
+  "name": "optiloom",
+  "version": "0.0.1",
+  "description": "Transforms your images into lighter, dazzling masterpieces without compromise.",
+  "main": "optiloom.js",
+  "bin": {
+    "optiloom": "optiloom.js"
+  },
+  "source": "optiloom.js",
+  "scripts": {
+    "start": "node optiloom.js  -q 80"
+  },
+  "keywords": [
+    "optimization",
+    "images",
+    "package",
+    "Node.js",
+    "cli"
+  ],
+  "author": "Ivan Mercedes <ivanmercede@gmail.com> (https://ivanmercedes.com/)",
+  "license": "MIT",
+  "files": [
+    "package.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "sharp": "^0.32.6",
+    "yargs": "^17.7.2"
+  }
+}
