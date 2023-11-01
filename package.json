@@ -21,7 +21,7 @@
   "homepage": "https://github.com/ivanmercedes/picslim#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ivanmercedes/picslim"
+    "url": "git+https://github.com/ivanmercedes/picslim.git"
   },
   "license": "MIT",
   "files": [
