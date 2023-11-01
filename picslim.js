@@ -1,119 +1,179 @@
 #!/usr/bin/env node
-const fs = require("fs");
+const fs = require("fs").promises;
 const sharp = require("sharp");
 const yargs = require("yargs");
 
 /**
  * Parses command line arguments using yargs library.
- *
- * @typedef {Object} Argv
- * @property {number} quality - Image quality (1 to 100)
- * @property {number} width - Maximum width allowed
- * @property {number} compressionLevel - PNG compression level (0 to 9)
  */
-
-const argv = yargs.options({
-  q: {
-    alias: "quality",
-    describe: "Image quality (1 to 100)",
-    demandOption: false,
-    type: "number",
-    default: 80,
-  },
-  mw: {
-    alias: "maxWidth",
-    describe: "Maximum width allowed",
-    demandOption: false,
-    type: "number",
-    default: null,
-  },
-  mh: {
-    alias: "maxHeight",
-    describe: "Maximum height allowed",
-    demandOption: false,
-    type: "number",
-    default: null,
-  },
-  c: {
-    alias: "compressionLevel",
-    describe: "PNG compression level (0 to 9)",
-    demandOption: false,
-    type: "number",
-    default: 9,
-  },
-}).argv;
-
-const inputDir = "./";
-const outputDir = "./min";
-const quality = argv.quality;
-const maxWidth = argv.maxWidth;
-const maxHeight = argv.maxHeight;
-const compressionLevel = argv.compressionLevel;
+function parseArguments()
+{
+	return yargs.options({
+		c: {
+			alias: "config",
+			describe: "Path to the configuration file",
+			demandOption: false,
+			type: "string",
+			default: "config.json",
+		},
+	}).argv;
+}
 
 /**
  * Verifies if the output directory exists; if not, creates it.
  *
  * @param {string} dir - The directory to verify.
  */
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir);
+async function createOutputDirectory(dir)
+{
+	try {
+		await fs.access(dir);
+	} catch ( error ) {
+		await fs.mkdir(dir);
+	}
 }
 
-fs.readdir(inputDir, (err, files) => {
-  if (err) {
-    console.error("Error reading input directory: ", err);
-    return;
-  }
+/**
+ * Process and optimize an image file.
+ *
+ * @param {string} inputPath - Path to the input image file.
+ * @param {string} outputPath - Path to the output image file.
+ * @param {string} file - The file name.
+ * @param {number} maxWidth - Maximum width allowed.
+ * @param {number} maxHeight - Maximum height allowed.
+ * @param {number} quality - Image quality.
+ * @param {number} compressionLevel - PNG compression level.
+ */
+async function processImage(inputPath, outputPath, file, maxWidth, maxHeight, quality, compressionLevel)
+{
+	try {
+		const image = sharp(inputPath);
+		const metadata = await image.metadata();
+		const originalWidth = metadata.width;
+		const originalHeight = metadata.height;
+		const imageProcessor = image.resize(
+			originalWidth > maxWidth ? maxWidth : null,
+			originalHeight > maxHeight ? maxHeight : null
+		);
 
-  files.forEach((file) => {
-    const inputPath = `${inputDir}/${file}`;
-    const outputPath = `${outputDir}/${file}`;
+		if ( file.match(/\.(jpg|jpeg)$/i) ) {
+			await imageProcessor.jpeg({quality}).toFile(outputPath);
+			console.log(`Optimized JPEG image: ${file}`);
+		} else if ( file.match(/\.(png)$/i) ) {
+			await imageProcessor.png({quality, compressionLevel}).toFile(outputPath);
+			console.log(`Optimized PNG image: ${file}`);
+		}
+	} catch ( error ) {
+		console.error(`Optimization error ${file}: `, error);
+	}
+}
 
-    if (file.match(/\.(jpg|jpeg)$/i)) {
-      sharp(inputPath)
-        .metadata()
-        .then((metadata) => {
-          const originalWidth = metadata.width;
-          const originalHeight = metadata.height;
-          sharp(inputPath)
-            .resize(
-              originalWidth > maxWidth ? maxWidth : null,
-              originalHeight > maxHeight ? maxHeight : null,
-            )
-            .jpeg({
-              quality,
-            })
-            .toFile(outputPath, (err, info) => {
-              if (err) {
-                console.error(`Optimization error ${file}: `, err);
-              } else {
-                console.log(`Optimized PNG image: ${file}`);
-              }
-            });
-        });
-    } else if (file.match(/\.(png)$/i)) {
-      sharp(inputPath)
-        .metadata()
-        .then((metadata) => {
-          const originalWidth = metadata.width;
-          const originalHeight = metadata.height;
-          sharp(inputPath)
-            .resize(
-              originalWidth > maxWidth ? maxWidth : null,
-              originalHeight > maxHeight ? maxHeight : null,
-            )
-            .png({
-              quality,
-              compressionLevel,
-            })
-            .toFile(outputPath, (err, info) => {
-              if (err) {
-                console.error(`Optimization error ${file}: `, err);
-              } else {
-                console.log(`Optimized PNG image: ${file}`);
-              }
-            });
-        });
-    }
-  });
-});
+
+/**
+ * Load settings from a configuration file.
+ *
+ * @param {string} configFile - Path to the configuration file.
+ */
+async function loadConfig(configFile)
+{
+	try {
+
+		const configData = await fs.readFile(configFile, "utf8");
+
+		if ( configData.trim() === '' ) {
+			console.error("Configuration file is empty.");
+			process.exit(1);
+		}
+
+		if ( !validateJson(configData) ) {
+			console.error("Configuration file is not a valid JSON object.");
+			process.exit(1);
+		}
+
+		const config = JSON.parse(configData);
+
+		validateConfig(config);
+
+		if ( typeof config !== 'object' || Array.isArray(config) ) {
+			console.error("Configuration file is not a valid JSON object.");
+			process.exit(1);
+		}
+
+		// Add validation checks here
+		if ( !config.inputDir || !config.outputDir ) {
+			console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.");
+			process.exit(1);
+		}
+		// Add more validation checks as needed
+
+		return config;
+	} catch ( error ) {
+		console.error("Error loading or parsing the configuration file: ", error);
+		process.exit(1);
+	}
+}
+
+function validateJson(json)
+{
+	const isJson = (str) =>
+	{
+		try {
+			JSON.parse(str);
+		} catch ( e ) {
+			//Error
+			//JSON is not okay
+			return false;
+		}
+
+		return true;
+	}
+
+	return isJson(json);
+}
+
+/**
+ * Validate the configuration object.
+ *
+ * @param {object} config - The loaded configuration object.
+ */
+function validateConfig(config)
+{
+
+	if ( !config.inputDir || !config.outputDir ) {
+		console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.");
+		process.exit(1);
+	}
+}
+
+// The rest of your code remains unchanged.
+
+/**
+ * The main function that processes all image files in the input directory.
+ */
+async function main()
+{
+	const argv = parseArguments();
+	const config = await loadConfig(argv.config);
+
+	const inputDir = config.inputDir;
+	const outputDir = config.outputDir;
+	const quality = config.quality;
+	const maxWidth = config.maxWidth;
+	const maxHeight = config.maxHeight;
+	const compressionLevel = config.compressionLevel;
+
+	await createOutputDirectory(outputDir);
+
+	try {
+		const files = await fs.readdir(inputDir);
+		for ( const file of files ) {
+			const inputPath = `${inputDir}/${file}`;
+			const outputPath = `${outputDir}/${file}`;
+			await processImage(inputPath, outputPath, file, maxWidth, maxHeight, quality, compressionLevel);
+		}
+	} catch ( error ) {
+		console.error("Error reading input directory: ", error);
+	}
+}
+
+main();
