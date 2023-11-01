@@ -1,0 +1,8 @@
+{
+  "inputDir": "./in",
+  "outputDir": "./min",
+  "quality": 80,
+  "maxWidth": null,
+  "maxHeight": null,
+  "compressionLevel": 9
+}
