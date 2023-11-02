@@ -1,6 +1,6 @@
 # PicSlim
 
-**Picslim** is a Node.js package that allows you to optimize images in a specified directory. It supports JPEG and PNG images, and you can control the quality and resizing of the images during optimization.
+**Picslim** is a Node.js package that allows you to efficiently optimize images within a specified directory. It supports **JPEG** and **PNG** images, image formats, offering fine-grained control over image quality and resizing options during the optimization process. With **Picslim**, you can effortlessly reduce file sizes and enhance the loading performance of your images.
 
 ## Installation
 
@@ -8,6 +8,12 @@ You can install picslim globally using npm:
 
 ```bash
 npm install -g picslim
+```
+
+or
+
+```bash
+npx picslim
 ```
 
 # Usage
@@ -18,17 +24,43 @@ Once installed, you can use the optimizimage command in your terminal. Here's ho
 picslim [options]
 ```
 
-Options:
+### Options
 
-**-q, --quality [value]:** Set the image quality (1 to 100, default: 80).<br>
-**-mw, --maxWidth [value]:** Set the maximum width allowed (default: null).<br>
-**-mh, --maxHeight [value]:** Set the maximum height allowed (default: null).<br>
-**-c, --compressionLevel [value]:** Set the compression level (0 to 9, default: 9).
+- `-c, --config <path>`: Path to the configuration file. (default: 'config.json')
+- `-q, --quality <number>`: Image quality (0-100).
+- `-l, --compressionLevel <number>`: PNG compression level (0-9).
+- `-w, --maxWidth <number>`: Maximum width allowed for images.
+- `-h, --maxHeight <number>`: Maximum height allowed for images.
+- `-i, --input <path>`: Path to the input directory.
+- `-o, --output <path>`: Path to the output directory.
 
-Example:
+### Configuration File
+
+You can create a `config.json` file in your project directory to specify default settings. Here's an example configuration:
+
+```json
+{
+  "inputDir": "./in",
+  "outputDir": "./min",
+  "quality": 80,
+  "maxWidth": null,
+  "maxHeight": null,
+  "compressionLevel": 9
+}
+```
+
+### Example:
+
+Optimize images using default settings from the configuration file:
 
 ```bash
-picslim -q 90 -w 1920
+picslim
+```
+
+Optimize images with custom settings:
+
+```bash
+picslim -q 90 -w 800 -h 600 -l 4 -i input_images -o output_images
 ```
 
 This will optimize all JPEG and PNG images in the current directory, and the optimized images will be saved in a 'min' directory.
@@ -65,3 +97,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ### Author
 
 Ivan Mercedes
+
+### Contributors
+
+- [Elminson De Oleo Baez](https://github.com/elminson)
