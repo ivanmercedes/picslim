@@ -28,6 +28,7 @@
   "license": "MIT",
   "files": [
     "picslim.js",
+    "config.json",
     "package.json",
     "README.md"
   ],
