@@ -14,14 +14,56 @@ function parseArguments () {
       demandOption: false,
       type: 'string',
       default: 'config.json'
+    },
+    q: {
+      alias: 'quality',
+      describe: 'Image quality',
+      demandOption: false,
+      type: 'number',
+      default: null
+    },
+    l: {
+      alias: 'compressionLevel',
+      describe: 'PNG compression level',
+      demandOption: false,
+      type: 'number',
+      default: null
+    },
+    w: {
+      alias: 'maxWidth',
+      describe: 'Maximum width allowed',
+      demandOption: false,
+      type: 'number',
+      default: null
+    },
+    h: {
+      alias: 'maxHeight',
+      describe: 'Maximum height allowed',
+      demandOption: false,
+      type: 'number',
+      default: null
+    },
+    i: {
+      alias: 'input',
+      describe: 'Path to the input directory',
+      demandOption: false,
+      type: 'string',
+      default: null
+    },
+    o: {
+      alias: 'output',
+      describe: 'Path to the output directory',
+      demandOption: false,
+      type: 'string',
+      default: null
     }
   }).argv
 }
 
 /**
- * Verifies if the output directory exists; if not, creates it.
- *
- * @param {string} dir - The directory to verify.
+ * Creates an output directory if it doesn't exist.
+ * @param {string} dir - The directory path to create.
+ * @returns {Promise<void>}
  */
 async function createOutputDirectory (dir) {
   try {
@@ -61,64 +103,37 @@ async function processImage (inputPath, outputPath, file, maxWidth, maxHeight, q
       console.log(`Optimized PNG image: ${file}`)
     }
   } catch (error) {
-    console.error(`Optimization error ${file}: `, error)
+    // console.error(`Optimization error ${file}: `, error)
   }
 }
 
 /**
- * Load settings from a configuration file.
+ * Load settings from a configuration file. If the specified configuration file doesn't exist,
+ * it will use the default 'config.json' from the package.
  *
  * @param {string} configFile - Path to the configuration file.
  */
 async function loadConfig (configFile) {
+  let config
   try {
     const configData = await fs.readFile(configFile, 'utf8')
-
-    if (configData.trim() === '') {
-      console.error('Configuration file is empty.')
-      process.exit(1)
-    }
-
-    if (!validateJson(configData)) {
-      console.error('Configuration file is not a valid JSON object.')
-      process.exit(1)
-    }
-
-    const config = JSON.parse(configData)
-
-    validateConfig(config)
-
-    if (typeof config !== 'object' || Array.isArray(config)) {
-      console.error('Configuration file is not a valid JSON object.')
-      process.exit(1)
-    }
-
-    if (!config.inputDir || !config.outputDir) {
-      console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.")
-      process.exit(1)
-    }
-
-    return config
+    config = JSON.parse(configData)
   } catch (error) {
-    console.error('Error loading or parsing the configuration file: ', error)
+    console.error('Using the default configuration from the package. ✅')
+    config = require('./config.json') // Load default configuration from the package
+  }
+
+  if (!validateConfigObject(config)) {
+    console.error('Invalid configuration object.')
     process.exit(1)
   }
-}
 
-function validateJson (json) {
-  const isJson = (str) => {
-    try {
-      JSON.parse(str)
-    } catch (e) {
-      // Error
-      // JSON is not okay
-      return false
-    }
-
-    return true
+  if (!config.inputDir || !config.outputDir) {
+    console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.")
+    process.exit(1)
   }
 
-  return isJson(json)
+  return config
 }
 
 /**
@@ -126,11 +141,28 @@ function validateJson (json) {
  *
  * @param {object} config - The loaded configuration object.
  */
-function validateConfig (config) {
-  if (!config.inputDir || !config.outputDir) {
-    console.error("Configuration error: 'inputDir' and 'outputDir' are required fields.")
-    process.exit(1)
+function validateConfigObject (config) {
+  return (
+    typeof config === 'object' &&
+    !Array.isArray(config) &&
+    config.inputDir &&
+    config.outputDir
+  )
+}
+
+/**
+ * Returns the input directory path based on the provided arguments and configuration.
+ * If the provided arguments or configuration are '.', returns the current working directory.
+ * @param {string} argvInput - The input directory path provided as an argument.
+ * @param {string} configInputDir - The input directory path provided in the configuration.
+ * @returns {string} - The input directory path.
+ */
+function getInputDirectory (argvInput, configInputDir) {
+  if (argvInput === '.' || configInputDir === '.') {
+    return process.cwd()
   }
+
+  return argvInput || configInputDir
 }
 
 /**
@@ -139,13 +171,12 @@ function validateConfig (config) {
 async function main () {
   const argv = parseArguments()
   const config = await loadConfig(argv.config)
-
-  const inputDir = config.inputDir
-  const outputDir = config.outputDir
-  const quality = config.quality
-  const maxWidth = config.maxWidth
-  const maxHeight = config.maxHeight
-  const compressionLevel = config.compressionLevel
+  const inputDir = getInputDirectory(argv.input, config.inputDir)
+  const outputDir = getInputDirectory(argv.output, config.outputDir)
+  const quality = argv.quality ? argv.quality : config.quality
+  const maxWidth = argv.maxWidth ? argv.maxWidth : config.maxWidth
+  const maxHeight = argv.maxHeight ? argv.maxHeight : config.maxHeight
+  const compressionLevel = argv.compressionLevel ? argv.compressionLevel : config.compressionLevel
 
   await createOutputDirectory(outputDir)
 
