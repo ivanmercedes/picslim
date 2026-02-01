@@ -1,6 +1,12 @@
 # PicSlim
 
-**Picslim** is a Node.js package that allows you to efficiently optimize images within a specified directory. It supports **JPEG** and **PNG** images, image formats, offering fine-grained control over image quality and resizing options during the optimization process. With **Picslim**, you can effortlessly reduce file sizes and enhance the loading performance of your images.
+**Picslim** is a robust Node.js package that efficiently optimizes images within a specified directory (recursively). It supports **JPEG**, **PNG**, **WebP**, and **AVIF** formats, offering fine-grained control over image quality, resizing, and format conversion.
+
+Features:
+- **Fast**: Uses parallel processing to utilize all CPU cores.
+- **Recursive**: Automatically finds images in subdirectories.
+- **Modern Formats**: Optional support for generating **WebP** and **AVIF**.
+- **Smart Resizing**: Maintains aspect ratio and avoids enlarging images.
 
 ## Installation
 
@@ -10,7 +16,7 @@ You can install picslim globally using npm:
 npm install -g picslim
 ```
 
-or
+or run it directly with npx:
 
 ```bash
 npx picslim
@@ -18,9 +24,9 @@ npx picslim
 
 # Usage
 
-Once installed, you can use the optimizimage command in your terminal. Here's how you can use it:
+Once installed, you can use the `picslim` command in your terminal:
 
-```
+```bash
 picslim [options]
 ```
 
@@ -33,10 +39,11 @@ picslim [options]
 - `-h, --maxHeight <number>`: Maximum height allowed for images.
 - `-i, --input <path>`: Path to the input directory.
 - `-o, --output <path>`: Path to the output directory.
+- `-f, --formats <list>`: Comma-separated list of output formats (default: Source only). Options: `source`, `webp`, `avif`.
 
 ### Configuration File
 
-You can create a `config.json` file in your project directory to specify default settings. Here's an example configuration:
+You can create a `config.json` file in your project directory to specify default settings.
 
 ```json
 {
@@ -45,49 +52,34 @@ You can create a `config.json` file in your project directory to specify default
   "quality": 80,
   "maxWidth": null,
   "maxHeight": null,
-  "compressionLevel": 9
+  "compressionLevel": 9,
+  "formats": ["source"]
 }
 ```
 
-### Example:
+### Examples
 
-Optimize images using default settings from the configuration file:
-
+**1. Basic Optimization (Default)**
+Optimizes images in the current directory and saves them to `./min`. Keeps original format.
 ```bash
 picslim
 ```
 
-Optimize images with custom settings:
-
+**2. Custom Input/Output and Resizing**
 ```bash
-picslim -q 90 -w 800 -h 600 -l 4 -i input_images -o output_images
+picslim -i ./assets -o ./build/assets -w 800
 ```
 
-This will optimize all JPEG and PNG images in the current directory, and the optimized images will be saved in a 'min' directory.
-
-### Example
-
-Suppose you have a directory with the following images:
-
-- image1.jpg
-- image2.jpg
-- image3.png
-- image4.png
-
-You can optimize all these images with the following command:
-
+**3. Generate WebP Only**
+Converts all images to WebP format.
 ```bash
-picslim -q 90 -w 1920
+picslim -f webp
 ```
 
-After running the command, you will have the following directory structure:
-
-```markdown
-- min
-  - image1.jpg
-  - image2.jpg
-  - image3.png
-  - image4.png
+**4. Generate Optimized Source + AVIF**
+Keeps the original format (optimized) AND generates an AVIF version.
+```bash
+picslim -f source,avif
 ```
 
 ### License

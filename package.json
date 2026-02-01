@@ -1,6 +1,6 @@
 {
   "name": "picslim",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Picslim is a Node.js package that allows you to optimize images in a specified directory.",
   "main": "picslim.js",
   "bin": {
@@ -8,7 +8,11 @@
   },
   "source": "picslim.js",
   "scripts": {
-    "start": "node picslim.js  -q 80",
+    "start": "node picslim.js -q 80",
+    "test": "node picslim.js -i ./in -o ./out",
+    "test:webp": "node picslim.js -i ./in -o ./out -f webp",
+    "test:all": "node picslim.js -i ./in -o ./out -f source,webp,avif",
+    "clean": "rm -rf ./out/*",
     "format": "standard --fix",
     "prepare": "husky install"
   },
@@ -46,6 +50,8 @@
     ]
   },
   "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
     "sharp": "^0.32.6",
     "yargs": "^17.7.2"
   },
