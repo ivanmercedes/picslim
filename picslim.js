@@ -53,6 +53,12 @@ function parseArguments () {
       alias: 'formats',
       describe: 'Output formats (comma separated). Default: source. Options: source, webp, avif',
       type: 'string'
+    },
+    r: {
+      alias: 'recursive',
+      describe: 'Process images recursively',
+      type: 'boolean',
+      default: false
     }
   }).argv
 }
@@ -80,7 +86,8 @@ async function main () {
     compressionLevel: argv.compressionLevel || baseConfig.compressionLevel,
     maxWidth: argv.maxWidth || baseConfig.maxWidth,
     maxHeight: argv.maxHeight || baseConfig.maxHeight,
-    formats
+    formats,
+    recursive: argv.recursive || baseConfig.recursive || false
   }
 
   const inputDir = path.resolve(config.inputDir)
@@ -88,12 +95,13 @@ async function main () {
 
   console.log(chalk.gray(`Input: ${inputDir}`))
   console.log(chalk.gray(`Output: ${outputDir}`))
+  console.log(chalk.gray(`Recursive: ${config.recursive}`))
 
   // Find files
   console.log('Scanning files...')
   let files = []
   try {
-    files = await walkDirectory(inputDir)
+    files = await walkDirectory(inputDir, config.recursive)
   } catch (e) {
     console.error(chalk.red(`Error reading input directory: ${e.message}`))
     process.exit(1)

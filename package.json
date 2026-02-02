@@ -1,6 +1,6 @@
 {
   "name": "picslim",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Picslim is a Node.js package that allows you to optimize images in a specified directory.",
   "main": "picslim.js",
   "bin": {

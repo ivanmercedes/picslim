@@ -4,7 +4,7 @@
 
 Features:
 - **Fast**: Uses parallel processing to utilize all CPU cores.
-- **Recursive**: Automatically finds images in subdirectories.
+- **Recursive**: Optional support for finding images in subdirectories (`-r`).
 - **Modern Formats**: Optional support for generating **WebP** and **AVIF**.
 - **Smart Resizing**: Maintains aspect ratio and avoids enlarging images.
 
@@ -40,6 +40,7 @@ picslim [options]
 - `-i, --input <path>`: Path to the input directory.
 - `-o, --output <path>`: Path to the output directory.
 - `-f, --formats <list>`: Comma-separated list of output formats (default: Source only). Options: `source`, `webp`, `avif`.
+- `-r, --recursive`: Recursively process subdirectories (default: false).
 
 ### Configuration File
 
@@ -80,6 +81,12 @@ picslim -f webp
 Keeps the original format (optimized) AND generates an AVIF version.
 ```bash
 picslim -f source,avif
+```
+
+**5. Recursive Processing**
+Process images in the input directory and all its subdirectories.
+```bash
+picslim -i ./assets -r
 ```
 
 ### License

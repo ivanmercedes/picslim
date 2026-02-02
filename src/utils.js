@@ -4,9 +4,10 @@ const path = require('path')
 /**
  * Recursively walks through a directory and returns an array of file paths.
  * @param {string} dir - The directory to walk.
+ * @param {boolean} recursive - Whether to recursively walk through subdirectories.
  * @returns {Promise<string[]>} - Array of file paths.
  */
-async function walkDirectory (dir) {
+async function walkDirectory (dir, recursive = false) {
   let results = []
   try {
     const list = await fs.readdir(dir)
@@ -14,8 +15,10 @@ async function walkDirectory (dir) {
       const filePath = path.join(dir, file)
       const stat = await fs.stat(filePath)
       if (stat && stat.isDirectory()) {
-        const subResults = await walkDirectory(filePath)
-        results = results.concat(subResults)
+        if (recursive) {
+          const subResults = await walkDirectory(filePath, recursive)
+          results = results.concat(subResults)
+        }
       } else {
         results.push(filePath)
       }
