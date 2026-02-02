@@ -1,6 +1,6 @@
 {
   "name": "picslim",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Picslim is a Node.js package that allows you to optimize images in a specified directory.",
   "main": "picslim.js",
   "bin": {
@@ -34,7 +34,8 @@
     "picslim.js",
     "config.json",
     "package.json",
-    "README.md"
+    "README.md",
+    "src"
   ],
   "eslintConfig": {
     "extends": "./node_modules/standard/eslintrc.json"
